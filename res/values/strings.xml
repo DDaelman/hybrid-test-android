@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, HybridTestActivity!</string>
+    <string name="app_name">HybridTest</string>
+    <string name="app_package">mobile.absi.hybridtest</string>
+    <string name="account_type">mobile.absi.hybridtest</string>
+</resources>
