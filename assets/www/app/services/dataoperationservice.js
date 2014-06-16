@@ -114,7 +114,18 @@ function DataOperationService($state){
 	this.saveAll = function(){
 		LOG('SAVING ALL', that.OfflineHandler.toSave);
 		LOG('SAVING ALL CACHE', CacheCollection['Lead_cache']);
-		CacheCollection['Lead_cache'].saveAllAndSync(that.OfflineHandler.toSave, false);
+		CacheCollection['Lead_cache'].saveAllAndSync(that.OfflineHandler.toSave, function(data){
+			/*if(data.status === 'init'){
+				alert('INIT');
+			}
+			if(data.status === 'processing'){
+				alert('PROCESSING');
+			}
+			if(data.status === 'completed'){
+				alert('COMPLETED -- ' + data.succeeded +' /// ' + data.failed);
+			}
+			*/
+		});
 
 	};
 	

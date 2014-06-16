@@ -100,11 +100,11 @@ if(!Force){
 	LOG('SMARTSYNC-BULK -- SMARTSYNC BASE NOT LOADED - INCLUDE SMARTSYNC.JS BEFORE THIS FILE', {});
 }else{
 	_.extend(Force.StoreCache.prototype, {
-		saveAllAndSync: function(records){
+		saveAllAndSync: function(records, completeCB){
 			LOG('SMARTSYNC-BULK -- SAVE AND SYNC ALL START', records);
 			//CHECK FOR CONFLICTS?
 			var loader = new BulkDataLoader();
-			loader.saveAll(records); //Saving to SF
+			loader.saveAll(records, completeCB); //Saving to SF
 			var jsonRecords = [];
 			records.forEach(function(rec){
 				jsonRecords.push(rec.toJSON());
@@ -121,7 +121,8 @@ var BulkJob = function(operation, objectType){
 	this.objectType = objectType;
 	this.jobId = '';
 	this.batches = [];
-	this.doMonitor = false;
+	this.failedRecords = [];
+	this.processedRecords = [];
 
 	this.create = function(onJobReady){
 		var that = this;
@@ -188,17 +189,17 @@ var BulkJob = function(operation, objectType){
 		xhr.send(template);
 	};
 
-	this.run = function(){		
+	this.run = function(completeCB){		
 		var that = this;		
 		this.create(function(){							//Create Job on SF
 			that.batches.forEach(function(CSVBatch){	
 				that.runBatch(CSVBatch);				//Start adding batches when Job created
-			});							
-			that.checkBatchStatus();					//Monitor status and close when batches processed
+			});						
+			that.checkBatchStatus(completeCB);					//Monitor status and close when batches processed
 		});
 	};
 
-	this.checkBatchStatus = function(){
+	this.checkBatchStatus = function(completeCB){
 		var that = this;
 		var destination = Force.forcetkClient.impl.instanceUrl + '/services/async/30.0/job/' + this.jobId + '/batch';
 		var xhr = createCORSRequest('GET', destination); //GET Method very important, otherwise service assumes a batch is being created, not read
@@ -217,21 +218,21 @@ var BulkJob = function(operation, objectType){
 				}
 				if(status === 'Completed'){
 					LOG('SMARTSYNC-BULK -- BATCH COMPLETED', id);
-					that.checkBatchRecords(id);
+					that.checkBatchRecords(id, completeCB);
 					processedCount++;
 				}
 			}
 			//Probably not the most efficient use of API call limits, though batch counts should never be high anyway
 			if(processedCount != that.batches.length){
-				that.checkBatchStatus();
+				that.checkBatchStatus(completeCB);
 			}else{
-				that.close();
+				that.close();				
 			}
 		};
 		xhr.send();
 	};
 
-	this.checkBatchRecords = function(id){
+	this.checkBatchRecords = function(id, completeCB){
 		var that = this;
 		var destination = Force.forcetkClient.impl.instanceUrl + '/services/async/30.0/job/' + this.jobId + '/batch/' + id + '/result';
 		var xhr = createCORSRequest('GET', destination);
@@ -244,11 +245,20 @@ var BulkJob = function(operation, objectType){
 			CSVArray.forEach(function(row){
 				var lastIdx = row.length - 1;
 				if(row[lastIdx] && row[lastIdx] !== '' && row[lastIdx] !== 'Error'){ 
+					that.failedRecords.push(row[0]);
 					LOG('SMARTSYNC-BULK -- RECORD ERROR', row[0]);
 				}else{
-					LOG('SMARTSYNC-BULK -- RECORD SUCCESS', row[0]);
+					if(row[0] !== 'Id' && row[0] !== ''){
+						that.processedRecords.push(row[0]);
+						LOG('SMARTSYNC-BULK -- RECORD SUCCESS', row[0]);
+					}
 				}
 			});
+			completeCB({
+					status: 'completed',
+					failed: that.failedRecords,
+					succeeded: that.processedRecords
+				});
 		};
 		xhr.send();
 	};
@@ -267,10 +277,21 @@ var BulkDataLoader = function(){
 		deletions: {}
 	};
 
-	this.saveAll = function(records){
+	this.saveAll = function(records, completeCB){
 		//Records can contain data for multiple object types
+		completeCB({
+			status: 'init',
+			failed: [],
+			succeeded: []
+		});
 		this.separateJobs(records);
-		this.distributeBatches();
+		
+		completeCB({
+			status: 'processing',
+			failed: [],
+			succeeded: []
+		});
+		this.distributeBatches(completeCB);		
 	};
 
 	this.separateJobs = function(records){
@@ -304,20 +325,20 @@ var BulkDataLoader = function(){
 		});
 	};
 
-	this.distributeBatches = function(){
+	this.distributeBatches = function(completeCB){
 		for (var objectType in Jobs.inserts) {
 		    Jobs.inserts[objectType].addBatch(CSV.inserts[objectType]);
-		    Jobs.inserts[objectType].run();
+		    Jobs.inserts[objectType].run(completeCB);
 		}	
 
 		for (var objectType in Jobs.updates) {
 		    Jobs.updates[objectType].addBatch(CSV.updates[objectType]);
-			Jobs.updates[objectType].run();
+			Jobs.updates[objectType].run(completeCB);
 		}
 
 		for (var objectType in Jobs.deletions) {
 		    Jobs.deletions[objectType].addBatch(CSV.deletions[objectType]);
-			Jobs.deletions[objectType].run();
+			Jobs.deletions[objectType].run(completeCB);
 		}
 	};
 
