@@ -245,7 +245,7 @@ var BulkJob = function(operation, objectType){
 			CSVArray.forEach(function(row){
 				var lastIdx = row.length - 1;
 				if(row[lastIdx] && row[lastIdx] !== '' && row[lastIdx] !== 'Error'){ 
-					that.failedRecords.push(row[0]);
+					that.failedRecords.push({id: row[0], error: row[lastIdx]});
 					LOG('SMARTSYNC-BULK -- RECORD ERROR', row[0]);
 				}else{
 					if(row[0] !== 'Id' && row[0] !== ''){
