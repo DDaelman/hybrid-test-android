@@ -267,9 +267,6 @@
                 }
                 else {
                     if (_.any(records, function(record) { 
-                        LOG('CHECK FOR ID', record);                        
-                        LOG('CHECK FOR ID', record.Id);
-                        LOG('CHECK FOR ID', _.has(record, that.keyField));
                         return !_.has(record, 'Id'); })) {
                         throw new Error("Can't merge without " + that.keyField);
                     }

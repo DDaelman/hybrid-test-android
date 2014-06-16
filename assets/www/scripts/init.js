@@ -21,22 +21,12 @@ var apiVersion = "v28.0";
 		}
 		*/
 
-var forcetkClient;
-var debugMode = true;
 var logToConsole = cordova.require("salesforce/util/logger").logToConsole;
 
 //Detailed alerting for javascript objects
 var displayObject = function(obj){
 		alert('OBJ -- ' + JSON.stringify(obj, null, 4));
 };
-
-//Generic log messages
-var LOG = function(preamble, object){
-	var date = new Date();
-    var formatted = '[' + date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' - ' +  date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + ']';
-
-	console.log('DEBUG -- ' + formatted + ' -- ' + preamble + ' -- ' + JSON.stringify(object));
-}
 
 jQuery(document).ready(function() {
 	//Add event listeners and so forth here

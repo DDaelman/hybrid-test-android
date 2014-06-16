@@ -106,8 +106,7 @@ if (forcetk.Client === undefined) {
     forcetk.Client.prototype.getUserAgentString = function() {
         return this.userAgentString;
     }
-
-
+    
     /**
     * Compute SalesforceMobileSDK for web app
     */
@@ -273,8 +272,10 @@ if (forcetk.Client === undefined) {
                 instance = elements[1];
             }
             this.instanceUrl = "https://" + instance + ".salesforce.com";
+            LOG('INSTANCEURL DEFINED HERE', this.instanceUrl);
         } else {
             this.instanceUrl = instanceUrl;
+            LOG('INSTANCEURL DEFINED HERE', this.instanceUrl);
         }
     }
 

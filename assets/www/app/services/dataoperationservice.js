@@ -76,7 +76,7 @@ function DataOperationService($state){
 		);
 		if(!that.isOnline()){	
 			LOG('AFTER CACHE STORE', record.get('Id'));		
-			that.OfflineHandler.toSave.push(record.toJSON());
+			that.OfflineHandler.toSave.push(record);
 		}
 	};
 
@@ -114,7 +114,7 @@ function DataOperationService($state){
 	this.saveAll = function(){
 		LOG('SAVING ALL', that.OfflineHandler.toSave);
 		LOG('SAVING ALL CACHE', CacheCollection['Lead_cache']);
-		CacheCollection['Lead_cache'].saveAll(that.OfflineHandler.toSave, false);
+		CacheCollection['Lead_cache'].saveAllAndSync(that.OfflineHandler.toSave, false);
 
 	};
 	
@@ -124,9 +124,10 @@ function DataOperationService($state){
 			that.create(record);
 		});
 		that.OfflineHandler.toCreate = [];
-		that.OfflineHandler.toSave.forEach(function(record){
-			that.save(record, true);
-		});
+		/*that.OfflineHandler.toSave.forEach(function(record){
+			that.save(record.toJSON(), true);
+		});*/
+		that.saveAll();
 		that.OfflineHandler.toSave = [];
 		that.OfflineHandler.toDelete.forEach(function(record){
 			that.destroy(record);
