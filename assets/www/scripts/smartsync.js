@@ -302,7 +302,6 @@
                     records = _.map(records, function(record) {
                         return that.addLocalFields(record);
                     });
-                    LOG('UPSERT NEW', records);
                     return smartstoreClient.upsertSoupEntriesWithExternalId(that.soupName, records, that.keyField);
                 });
         },
@@ -807,7 +806,7 @@
         // To keep track of whether data was read from cache or not
         info = info || {};
         info.wasReadFromCache = false;
-
+        
         // Go to cache first
         if (cacheMode == Force.CACHE_MODE.CACHE_FIRST) {
             if (method == "create" || method == "update" || method == "delete") {

@@ -114,7 +114,7 @@ function DataOperationService($state){
 	this.saveAll = function(){
 		LOG('SAVING ALL', that.OfflineHandler.toSave);
 		LOG('SAVING ALL CACHE', CacheCollection['Lead_cache']);
-		CacheCollection['Lead_cache'].saveAllAndSync(that.OfflineHandler.toSave, function(data){
+		CacheCollection['Lead_cache'].saveAllAndSync(that.OfflineHandler.toSave, this.ConflictHandler.mergeMode, function(data){
 			/*if(data.status === 'init'){
 				alert('INIT');
 			}
@@ -125,6 +125,10 @@ function DataOperationService($state){
 				alert('COMPLETED -- ' + data.succeeded +' /// ' + data.failed);
 			}
 			*/
+		},
+		function(conflict){
+			LOG('CONFLICT', conflict);
+		 	that.addConflict(conflict);
 		});
 
 	};

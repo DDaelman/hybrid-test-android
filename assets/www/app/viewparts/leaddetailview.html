@@ -5,7 +5,7 @@
 		</ion-header-bar>
 		<ion-content style="height:80px; max-height:80px;">
 			<div class="button-bar">
-				<button class="button button-dark" style="border-color:dark-gray;" ng-click="confirmDelete(true)">Yes</button>
+				<button class="button button-dark" style="border-color:gray;" ng-click="confirmDelete(true)">Yes</button>
 				<button class="button button-dark" style="border-color:gray;" ng-click="confirmDelete(false)">No</button>
 			</div>
 		</ion-content>
@@ -30,28 +30,34 @@
 </ion-header-bar>
 <ion-content has-header="true" has-footer="true">
 	<div id="leadform" class="list">
-	  <div class="item item-input large-item">
+	  <div class="item item-input-inset large-item">
 	    <span class="input-label">
 	    	First Name
 	    	<i class="fa fa-pencil balanced pull-right" ng-show="leadform.firstname.$dirty"/>
 	    </span>
-	    <input type="text" ng-model="lead.fName" name="firstname">	    
+	    <label class="item-input-wrapper" style="max-width:230px;">
+	    	<input type="text" ng-model="lead.fName" name="firstname"/>	    
+	    </label>
 	  </div>
-	  <label class="item item-input large-item">
+	  <div class="item item-input-inset large-item">
 	    <span class="input-label">
 	    	Last Name
-	    	<i class="fa fa-pencil balanced pull-right" ng-show="(leadform.lastname.$dirty && !leadform.lastname.$error.required)"/>
-	    	<i class="ion-alert assertive pull-right" ng-show="leadform.lastname.$error.required"/>
+	    	<i class="fa fa-pencil balanced pull-right" ng-show="(leadform.lastname.$dirty && !leadform.lastname.$error.required)"></i>
+	    	<i class="ion-alert assertive pull-right" ng-show="leadform.lastname.$error.required"></i>
 	    </span>
-	    <input type="text" ng-model="lead.lName" name="lastname" required>	    
-	  </label>
+	    <label class="item-input-wrapper" style="max-width:230px;">
+	    	<input type="text" ng-model="lead.lName" name="lastname" required/>	 
+	    </label>   
+	  </div>
 	  <div class="item item-input item-button-right large-item">
 	    <span class="input-label">
 	    	Phone
 	    	<i class="fa fa-pencil balanced pull-right" ng-show="(leadform.phone.$dirty && !leadform.phone.$error.required)"/>
 	    	<i class="ion-alert assertive pull-right" ng-show="leadform.phone.$error.required"/>
 	    </span>
-	    <input type="text" ng-model="lead.phone" style="max-width:130px;" name="phone" required/>	    
+	    <label class="item-input-wrapper" style="max-width:230px;">
+	    	<input type="text" ng-model="lead.phone" name="phone" required/>
+	    </label>	    
 	    <button class="button button-large" style="height:57px;" ng-click="callphone()" ng-hide="isNew">
 	    	<i class="icon ion-android-call"></i>
 	    </button>
@@ -61,7 +67,9 @@
 	    	Company
 	    	<i class="fa fa-pencil balanced pull-right" ng-show="leadform.company.$dirty"/>
 	    </span>
-	    <input type="text" ng-model="lead.company" name="company">	    
+	    <label class="item-input-wrapper" style="max-width:230px;">
+	    	<input type="text" ng-model="lead.company" name="company">
+	    </label>	    
 	  </label>
 	  <label class="item item-input large-item" ng-show="inSalesforce || isNew">
 	    <span class="input-label">
