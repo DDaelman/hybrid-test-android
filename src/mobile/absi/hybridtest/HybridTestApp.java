@@ -27,25 +27,38 @@
 package mobile.absi.hybridtest;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.salesforce.androidsdk.smartstore.app.SalesforceSDKManagerWithSmartStore;
-
+import com.salesforce.androidsdk.ui.LoginActivity;
 /**
  * Application class for the contact explorer app.
  */
 public class HybridTestApp extends Application {
-
+	//Utility to access Application Context outside of specific subclasses
+	private static HybridTestApp instance;
+	public static Context getContext() {
+	   	return instance;
+	}
+	
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		SalesforceSDKManagerWithSmartStore.initHybrid(getApplicationContext(), new KeyImpl());
-
+		instance = this;
+		
+		//Alternate initialization to use extended DroidGap class
+		//Replace the existing value for android:name of the main action in the AndroidManifest by new class path
+		SalesforceSDKManagerWithSmartStore.initHybrid(getApplicationContext(),
+				new KeyImpl(),
+				NotificationActivity.class,
+				LoginActivity.class);
+	
 		/*
 		 * Un-comment the line below to enable push notifications in this app.
 		 * Replace 'pnInterface' with your implementation of 'PushNotificationInterface'.
 		 * Add your Google package ID in 'bootonfig.json', as the value
 		 * for the key 'androidPushNotificationClientId'.
 		 */
-		// SalesforceSDKManagerWithSmartStore.getInstance().setPushNotificationReceiver(pnInterface);
+		SalesforceSDKManagerWithSmartStore.getInstance().setPushNotificationReceiver(new NotificationService());
 	}
 }

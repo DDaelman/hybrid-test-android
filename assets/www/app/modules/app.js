@@ -1,10 +1,10 @@
 'use strict';
 
-var AppModule = angular.module("App", ["ngRoute",
-										"Models",
-										"Services",
-										"Controllers",												
-										"ionic"]);
+var AppModule = angular.module('App', ['ngRoute',
+										'Models',
+										'Services',
+										'Controllers',												
+										'ionic']);
 
 AppModule.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
@@ -29,3 +29,9 @@ AppModule.config(function($stateProvider, $urlRouterProvider) {
 
     $urlRouterProvider.otherwise('/home');
 });
+
+var NOTIFICATION_FLAG = false;
+function entrypoint(msg){
+	NOTIFICATION_FLAG = true;
+	LOG("NOTIFICATION MESSAGE", msg);
+}

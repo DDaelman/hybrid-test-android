@@ -1,6 +1,12 @@
 'use strict';
 
 function LeadListController($scope, $ionicLoading, $state, $ionicSideMenuDelegate, LeadService, DeviceContactService){
+	if(NOTIFICATION_FLAG){
+		$state.transitionTo('settings');
+		NOTIFICATION_FLAG = false;
+		return;
+	}
+
 	//+++++++++++++++++++++VARIABLES
 	$scope.loadingIndicator = $ionicLoading.show({
 		template: '<i class="fa fa-cog fa-spin"></i>',
@@ -76,40 +82,17 @@ function LeadListController($scope, $ionicLoading, $state, $ionicSideMenuDelegat
 		});
 
 		$scope.devicecontacts.forEach(function(contact){
-			if(contact.name.givenName !== null){
-				firstLetter  = contact.name.givenName.substring(0,1).toUpperCase();
-			}else{
-				firstLetter  = contact.name.familyName.substring(0,1).toUpperCase();
-			}
-			if(!$scope.leads[firstLetter]){
-				//First letter encounter, create new array to receive objects
-				//If letter doesnt exist, this means there are no SF Leads with this name => must be device-only contact by default
-				//LOG('ADDING DEVICE CONTACT FIRST LETTER ENCOUNTER', contact.displayName);
-				$scope.leads[firstLetter] = [];
-				$scope.leads[firstLetter].push(
-					{
-						sfid: null,
-						ctid: contact.id,
-						fName: contact.name.givenName,
-						lName: contact.name.familyName,
-						fullname: contact.displayName,
-						inSalesforce: false,
-						inDevice:true
-					}
-				);
-			}else{
-				var contactInList = false;
-				$scope.leads[firstLetter].forEach(function(lead){
-					if(contact.displayName == lead.fName + ' ' + lead.lName){
-						//LOG('EDITING DEVICE CONTACT IN LIST' + contact.displayName , lead);
-						lead.inDevice = true;
-						lead.ctid = contact.id;
-						contactInList = true;
-					}
-				});
-
-				if(!contactInList){
-					//LOG('ADDING DEVICE CONTACT', contact);
+			if(contact.name.givenName){
+				if(contact.name.givenName !== null){
+					firstLetter  = contact.name.givenName.substring(0,1).toUpperCase();
+				}else{
+					firstLetter  = contact.name.familyName.substring(0,1).toUpperCase();
+				}
+				if(!$scope.leads[firstLetter]){
+					//First letter encounter, create new array to receive objects
+					//If letter doesnt exist, this means there are no SF Leads with this name => must be device-only contact by default
+					//LOG('ADDING DEVICE CONTACT FIRST LETTER ENCOUNTER', contact.displayName);
+					$scope.leads[firstLetter] = [];
 					$scope.leads[firstLetter].push(
 						{
 							sfid: null,
@@ -121,8 +104,33 @@ function LeadListController($scope, $ionicLoading, $state, $ionicSideMenuDelegat
 							inDevice:true
 						}
 					);
-				}	
-			}			
+				}else{
+					var contactInList = false;
+					$scope.leads[firstLetter].forEach(function(lead){
+						if(contact.displayName == lead.fName + ' ' + lead.lName){
+							//LOG('EDITING DEVICE CONTACT IN LIST' + contact.displayName , lead);
+							lead.inDevice = true;
+							lead.ctid = contact.id;
+							contactInList = true;
+						}
+					});
+
+					if(!contactInList){
+						//LOG('ADDING DEVICE CONTACT', contact);
+						$scope.leads[firstLetter].push(
+							{
+								sfid: null,
+								ctid: contact.id,
+								fName: contact.name.givenName,
+								lName: contact.name.familyName,
+								fullname: contact.displayName,
+								inSalesforce: false,
+								inDevice:true
+							}
+						);
+					}	
+				}		
+			}	
 		});
 		if(!leads.currentPageIndex || leads.currentPageIndex == leads.totalPages -1){
 			$ionicLoading.hide();
