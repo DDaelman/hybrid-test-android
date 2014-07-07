@@ -25,4 +25,6 @@
     <plugin name="com.salesforce.sdkinfo" value="com.salesforce.androidsdk.phonegap.SDKInfoPlugin"/>
     <plugin name="com.salesforce.smartstore" value="com.salesforce.androidsdk.smartstore.phonegap.SmartStorePlugin"/>
 	<plugin name="OpenAppPlugin" value="mobile.absi.hybridtest.OpenAppPlugin"/>	
+	<plugin name="PreferencesPlugin" value="mobile.absi.hybridtest.PreferencesPlugin"/>	
+	<plugin name="BarcodeScanner" value="com.phonegap.plugins.barcodescanner.BarcodeScanner"/>	
 </plugins>

@@ -191,6 +191,9 @@ cordova.define("salesforce/util/exec", function(require, exports, module) {
         errorCB = typeof errorCB !== "function" ? defaultErrorCB : errorCB;
         args.unshift("pluginSDKVersion:" + pluginVersion);
         var cordovaExec = require('cordova/exec');
+        LOG('LOGOUT_BUG', service);
+        LOG('LOGOUT_BUG', action);
+        LOG('LOGOUT_BUG', args);
         return cordovaExec(successCB, errorCB, service, action, args);                  
     };
 
@@ -233,27 +236,6 @@ cordova.define("salesforce/plugin/sdkinfo", function(require, exports, module) {
 
         // Constructor
         SDKInfo: SDKInfo
-    };
-});
-
-cordova.define("custom/plugin/openapp", function(require, exports, module) {
-    var SERVICE = "OpenAppPlugin";
-
-    var exec = require("salesforce/util/exec").exec;
-
-    /**
-     * Returns a populated SDKInfo object (via a callback)
-     */
-    var getInfo = function(successCB, errorCB) {
-        exec(SALESFORCE_MOBILE_SDK_VERSION, successCB, errorCB, SERVICE, "opencontacts", []);
-    };
-
-
-    /**
-     * Part of the module that is public
-     */
-    module.exports = {
-        getInfo: getInfo
     };
 });
 

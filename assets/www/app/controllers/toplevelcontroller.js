@@ -1,8 +1,22 @@
-'use strict'
+'use strict';
 
 function TopLevelController($scope, $state, DataOperationService, CustomObjectService){
 	$scope.settings = {
 		includeContacts: true
+	};
+
+	cordova.exec(function(val){ $scope.settings.includeContacts = (val === 'true');},
+				 function(err){LOG('READ_SETTINGS', err);},
+				 'PreferencesPlugin',
+				 'read_or_create',
+				 [{name: 'IncludeContacts', value:"true"}]);
+
+	$scope.editSettings = function(name, value){
+		cordova.exec(function(){/*Success*/},
+					 function(err){LOG('SETTINGS', err);},
+					 'PreferencesPlugin',
+					 'store',
+					 [{name: name, value: value.toString()}]);
 	};
 
 	$scope.toSettings = function(){

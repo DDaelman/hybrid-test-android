@@ -10,14 +10,14 @@
 	</h1>
 	<div class="buttons">
 		<button class="button button-icon icon ion-wifi" ng-class="isOnline ? 'wifion' : 'wifioff'"></button>
-		<button class="button button-icon icon fa fa-compress">
+		<button class="button button-icon icon ion-arrow-swap">
 			{{conflictCount}}			
 		</button>		
 	</div>
 </ion-header-bar>
 
-<ion-content has-header="true" ng-cloak>
-<h1 style="text-align:center;" class="icon ionicons ion-android-inbox" ng-hide="hasConflicts"/>
+<ion-content has-header="true" class="appcontent effect-rad" ng-cloak>
+<h1 style="text-align:center;"><i class="icon ionicons ion-android-inbox" ng-hide="hasConflicts"></i></h1>
 <h1 style="text-align:center;" ng-hide="hasConflicts">No Conflicts</h1>
 
 <div class="list" ng-show="hasConflicts">

@@ -4,14 +4,14 @@
   <ion-side-menu-content>
 <ion-header-bar class="appstyle" >
 	<div class="buttons">
-		<button class="button button-icon icon fa fa-bars" ng-click="openMenu()"></button>
+		<button class="button button-icon icon ion-navicon-round" ng-click="openMenu()"></button>
 	</div> 	
 	<h1 class="title">
 		Leads 	
 	</h1>
 	<div class="buttons">
 		<button class="button button-icon icon ion-wifi" ng-class="isOnline ? 'wifion' : 'wifioff'"></button>
-		<button class="button button-icon icon fa fa-compress" ng-click="goToConflicts()">
+		<button class="button button-icon icon ion-arrow-swap" ng-click="goToConflicts()">
 			{{conflictCount}}			
 		</button>				
 		<!--<button class="button button-icon fa fa-ellipsis-v" ng-model="showOverflow" ng-click="showOverflow = !showOverflow"></button>	-->	
@@ -22,22 +22,22 @@
       <ion-item class="dark item" ng-click="toSettings()">Settings</ion-item>
 </ion-list>
 -->
-<ion-header-bar class="bar-subheader item-input-inset" style="position:absolute;">
+<ion-header-bar class="bar-subheader item-input-inset effect-rad" style="position:absolute;">
 	<label class="item-input-wrapper">
 		<i class="icon ion-search placeholder-icon"></i>
 		<input type="text" ng-model="filter.input" placeholder="Filter">							
 	</label>
 </ion-header-bar>	
-<ion-content has-header="true">
+<ion-content has-header="true" class="appcontent effect-rad">
 	{{filterInput}}
 	<ion-list>
 		<ion-item class="item item-divider" ng-repeat-start="(firstLetter, leads) in leads" ng-show="filter.input == '' || filter.input == null">
 			{{firstLetter}}
 		</ion-item>
-		<ion-item class="item item-icon-right" ng-repeat="lead in leads | filter: namefilter " bindonce ng-click="detail(lead.sfid, lead.ctid)">
+		<ion-item class="item item-icon-right"  ng-repeat="lead in leads | filter: namefilter " bindonce ng-click="detail(lead.sfid, lead.ctid)">
 			{{lead.fullname}}
 			<i class="icon fa fa-cloud" style="color:#add8e6;" ng-show="lead.inSalesforce"></i>
-			<i class="icon fa fa-mobile" style="color:#62b4cf; font-size:45px;" ng-class="{bumpiconleft : lead.inSalesforce}" ng-show="lead.inDevice"></i>
+			<i class="icon fa fa-mobile" style="color:#89c7db; font-size:45px;" ng-class="{bumpiconleft : lead.inSalesforce}" ng-show="lead.inDevice"></i>
 		</ion-item>
 		<div ng-repeat-end></div>
 	</ion-list>
@@ -49,11 +49,11 @@
 	</div>
 </ion-footer-bar>
 </ion-side-menu-content>
-<ion-side-menu class="appstyle" side="left">
-	<label class="menu-title" >Lead Contact Manager</label>
+<ion-side-menu class="appstyle effect" side="left">
+	<label class="menu-title" >Lead Mgr</label>
 	<ion-list class="appstyle">			
 		<ion-item class="appstyle item item-icon-right"  ng-click="goToConflicts()">
-			<i class="icon fa fa-compress"></i>
+			<i class="icon ion-arrow-swap"></i>
 			Conflicts
 		</ion-item>
 		<ion-item class="appstyle item item-icon-right" ng-click="refresh()">

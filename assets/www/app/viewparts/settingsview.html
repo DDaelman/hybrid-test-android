@@ -9,14 +9,14 @@
 			Settings
 		</h1>		
 	</ion-header-bar>
-	<ion-content>
+	<ion-content class="appcontent effect-rad">
 		<ion-list>
 			<ion-item class="item">
 				<div style="display:inline; position:absolute; top:35%;">
 				Include device-only contacts
 				</div>
 				<label class="checkbox pull-right">
-				   <input type="checkbox" ng-model="settings.includeContacts">
+				   <input type="checkbox" ng-model="settings.includeContacts" ng-click="editSettings('IncludeContacts', settings.includeContacts)">
 				</label>
 			</ion-item>
 		</ion-list>

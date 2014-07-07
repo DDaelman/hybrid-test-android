@@ -8,9 +8,22 @@ a{
 	text-decoration:none;
 }
 
+.effect {
+	background:linear-gradient(to bottom, #73c5e0 , #257792) !important;
+	background:-webkit-linear-gradient(left, #73c5e0 , #257792) !important;
+	border-width:0px;
+}
+
+.effect-rad{
+    background:radial-gradient(#73c5e0 , #257792) !important;
+    background:-webkit-radial-gradient(#73c5e0 , #257792) !important;
+  	border-width:0px;
+}
+
 .appstyle{
 	background-color:#73c5e0;
 	color:#FFFFFF;
+	border-width:0;
 }
 
 .appstyle .title{
@@ -31,7 +44,7 @@ a{
 .appstyle .menu-title{
   display:block;
 	padding:10px;
-	background-color: #73c5e0;
+	background-color: #257792;
 	margin-bottom:0;
 	font-size:18pt;
 	font-weight:400;
@@ -39,9 +52,26 @@ a{
 .appstyle.menu{
   background-color: #6B99A8;
 }
+
 .appstyle .list{
 	border-top: 1px solid #62b4cf;
-	border-bottom: 1px solid #FFFFFF;
+	border-bottom: 1px solid #FFFFFF;	
+}
+
+.appcontent ion-list ion-item{
+	background-color:rgba(0,0,0,0);
+	border-color:#257792;
+	color:#EEEEEE;
+}
+
+.appcontent .list .item{
+	background-color:rgba(0,0,0,0);
+	border-color:#257792;
+	color:#EEEEEE;
+}
+
+.item-divider{
+	background-color:rgba(255,255,255,0.4) !important; border-width:0; color:#EEEEEE;
 }
 
 .appstyle .list .item:last-child{

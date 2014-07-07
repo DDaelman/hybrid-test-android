@@ -8,6 +8,7 @@ function LeadController($scope, $state, $stateParams, $ionicModal, $ionicLoading
 	  }).then(function(modal) {
 	    $scope.confirmationDialog = modal;
 	  });
+	$scope.oldParams = $stateParams;
 	$scope.inDevice = $scope.$eval($stateParams.inDevice);
 	$scope.inSalesforce = $scope.$eval($stateParams.inSalesforce);
 	$scope.isNew = !$scope.inDevice && !$scope.inSalesforce;
@@ -32,6 +33,7 @@ function LeadController($scope, $state, $stateParams, $ionicModal, $ionicLoading
 	};
 
 	$scope.addToDevice = function(){
+		document.addEventListener("resume", appResumed, false);
 		cordova.exec(
 					function(winParam) {alert('success');}, 
 					function(error) {alert('fail');}, 
@@ -45,11 +47,58 @@ function LeadController($scope, $state, $stateParams, $ionicModal, $ionicLoading
                  	}]);
 	};
 
+	$scope.addThroughQRCode = function(){
+		document.addEventListener("resume", appResumed, false);
+		cordova.exec(function (result) {
+			if(!result.cancelled){
+				VCF.parse(result.text, function(vcard) {
+				  LOG('FNAME', vcard.n['given-name'][0]);
+				  LOG('LNAME', vcard.n['family-name'][0]);
+				  LOG('TEL', vcard.tel[0].value);
+				  LOG('ORG', vcard.org[0]['organization-name']);			  
+				  LOG('ALL', vcard);
+
+				  $scope.lead.fName = vcard.n['given-name'][0];
+				  $scope.lead.lName = vcard.n['family-name'][0];
+				  $scope.lead.phone = vcard.tel[0].value;
+				  $scope.lead.company = vcard.org[0]['organization-name'];
+				  $scope.$apply();
+				});
+			}
+	    }, 
+	    function (error) {
+	        alert('Scanning failed: ' + error);
+	    },
+	    'BarcodeScanner',
+	    'scan',
+	    []);
+
+
+		/*
+		cordova.exec(function (resultArray) {
+	           VCF.parse(resultArray[0], function(vcard) {
+				  LOG('FNAME', vcard.n['given-name'][0]);
+				  LOG('LNAME', vcard.n['family-name'][0]);
+				  LOG('TEL', vcard.tel[0].value);
+				  LOG('ORG', vcard.org[0]['organization-name']);			  
+				  LOG('ALL', vcard);
+				});
+
+	      }, 
+	      errorfunc,
+	      "ScanditSDK", 
+	      "scan", 
+	      ["tGCpePumEeOAg+lBdoEDxzYF5oX0hzpII/ZK4rwcGIQ",{"beep": true,
+	                              "1DScanning" : true,
+	                              "2DScanning" : true}]);*/
+	};
+
 	$scope.addToSalesforce = function(){
 		$scope.edit();
 	};
 
 	$scope.showOnDevice = function(){
+		document.addEventListener("resume", appResumed, false);
 		cordova.exec(
 					function(winParam) {console.log('SHOW ON DEVICE -- SUCCESS -- ' + JSON.stringify(winParam));}, 
 					function(error) {console.log('SHOW ON DEVICE -- ERROR -- ' + JSON.stringify(error));}, 
@@ -61,8 +110,7 @@ function LeadController($scope, $state, $stateParams, $ionicModal, $ionicLoading
 	};
 
 	$scope.edit = function(){
-		var current = $state.current;
-        var params = $stateParams;	
+		var current = $state.current;        	
 
         $ionicLoading.show({
 			template: '<i class="fa fa-cog fa-spin"></i>',
@@ -86,7 +134,7 @@ function LeadController($scope, $state, $stateParams, $ionicModal, $ionicLoading
 										true, 
 										function(){
 											$ionicLoading.hide();
-											$state.transitionTo(current, params, { reload: true, inherit: true, notify: true });
+											$state.transitionTo(current, $scope.oldParams, { reload: true, inherit: true, notify: true });
 										},
 										function(){
 											$ionicLoading.hide();
@@ -95,9 +143,9 @@ function LeadController($scope, $state, $stateParams, $ionicModal, $ionicLoading
 			//Create or Create from device contact
 			DataOperationService.create($scope.leadObj, function(record){
 				$ionicLoading.hide();
-				$stateParams.leadId = record.get('Id');
-				$stateParams.inSalesforce = true;
-				$state.transitionTo(current, params, { reload: true, inherit: true, notify: true });
+				$scope.oldParams.leadId = record.get('Id');
+				$scope.oldParams.inSalesforce = true;
+				$state.transitionTo(current, $scope.oldParams, { reload: true, inherit: true, notify: true });
 			},
 			function(err){
 				LOG('LEAD EDIT', err);
@@ -128,13 +176,13 @@ function LeadController($scope, $state, $stateParams, $ionicModal, $ionicLoading
 	var init = function(){
 		if($scope.inSalesforce){
 			
-			$scope.leadObj = LeadService.getLead($stateParams.leadId);
+			$scope.leadObj = LeadService.getLead($scope.oldParams.leadId);
 
 			LOG('GETTING SF CONTACT', $scope.leadObj);
 
 			$scope.lead = {
 				id: $scope.leadObj.get('Id'),
-				ctid: $stateParams.ctid,
+				ctid: $scope.oldParams.ctid,
 				fName: $scope.leadObj.get('FirstName'),
 				lName: $scope.leadObj.get('LastName'),
 				phone: $scope.leadObj.get('Phone'),
@@ -145,14 +193,14 @@ function LeadController($scope, $state, $stateParams, $ionicModal, $ionicLoading
 			if($scope.inDevice){
 				DeviceContactService.getDeviceContacts(function(contacts){
 					contacts.forEach(function(contact){
-						if(contact.id == $stateParams.ctid){
+						if(contact.id == $scope.oldParams.ctid){
 							$scope.contactObj = contact;
 							var phone = null;
 							var org = null;
-							if($scope.contactObj.phoneNumbers[0] !== null){
+							if($scope.contactObj.phoneNumbers && $scope.contactObj.phoneNumbers[0] !== null){
 								phone = $scope.contactObj.phoneNumbers[0].value;
 							}
-							if($scope.contactObj.organizations[0] !== null){
+							if($scope.contactObj.organizations && $scope.contactObj.organizations[0] !== null){
 								org = $scope.contactObj.organizations[0].name;
 							} 
 							$scope.lead = {
@@ -164,6 +212,7 @@ function LeadController($scope, $state, $stateParams, $ionicModal, $ionicLoading
 								company: org,
 								status: 'Open - Not Contacted'
 							};
+							$scope.$apply();
 					}
 					});
 				},
@@ -204,20 +253,22 @@ function LeadController($scope, $state, $stateParams, $ionicModal, $ionicLoading
 	};
 
 	var appResumed = function(){
-		var current = $state.current;
-        var params = $stateParams;
-        $state.transitionTo(current, params, { reload: true, inherit: true, notify: true });
+		LOG('RESUMED', $scope.isNew);
+		LOG('RESUMED', $scope.lead);
+		if(!$scope.isNew){
+			var current = $state.current;
+	        var params = $scope.oldParams;
+	        $state.transitionTo(current, params, { reload: true, inherit: true, notify: true });
+	    }
+	    document.removeEventListener("resume", appResumed, false);
 	};
 
 	init();
-	LOG('STATEPARAMS BEFORE DEVICECHECK', $stateParams);
-	if($stateParams.leadId !== null){
-		LOG('STATEPARAMS BEFORE DEVICECHECK 2', $stateParams);
+	LOG('STATEPARAMS BEFORE DEVICECHECK', $scope.oldParams);
+	if($scope.oldParams.leadId !== null){
 		DeviceContactService.getDeviceContacts(checkContactExists, function(err){}, $scope.lead.lName);
 	}
-	//Force.forcetkClient.describe('Lead', describeStatusOptions, null);
-	CustomObjectService.getStatusOptions(describeStatusOptions);
-	document.addEventListener("resume", appResumed, false);
+	CustomObjectService.getStatusOptions(describeStatusOptions);	
 }
 
 ControllerModule.controller('LeadController', ['$scope', '$state', '$stateParams', '$ionicModal', '$ionicLoading', 'LeadService', 'DeviceContactService', 'DataOperationService', 'CustomObjectService', LeadController]);

@@ -23,15 +23,15 @@
 	</h1>
 	<div class="buttons">
 		<button class="button button-icon icon ion-wifi" ng-class="isOnline ? 'wifion' : 'wifioff'"></button>
-		<button class="button button-icon icon fa fa-compress" ng-click="goToConflicts()">
+		<button class="button button-icon icon ion-arrow-swap" ng-click="goToConflicts()">
 			{{conflictCount}}			
 		</button>
 	</div>
 </ion-header-bar>
-<ion-content has-header="true" has-footer="true">
+<ion-content has-header="true" has-footer="true" class="effect-rad" >
 	<div id="leadform" class="list">
-	  <div class="item item-input-inset large-item">
-	    <span class="input-label">
+	  <div class="item item-input-inset large-item" style="background-color:rgba(0,0,0,0) !important; border-color:#257792; color:#EEEEEE;">
+	    <span class="input-label" style="color:#EEEEEE;">
 	    	First Name
 	    	<i class="fa fa-pencil balanced pull-right" ng-show="leadform.firstname.$dirty"/>
 	    </span>
@@ -39,8 +39,8 @@
 	    	<input type="text" ng-model="lead.fName" name="firstname"/>	    
 	    </label>
 	  </div>
-	  <div class="item item-input-inset large-item">
-	    <span class="input-label">
+	  <div class="item item-input-inset large-item" style="background-color:rgba(0,0,0,0) !important; border-color:#257792; color:#EEEEEE;">
+	    <span class="input-label" style="color:#EEEEEE;">
 	    	Last Name
 	    	<i class="fa fa-pencil balanced pull-right" ng-show="(leadform.lastname.$dirty && !leadform.lastname.$error.required)"></i>
 	    	<i class="ion-alert assertive pull-right" ng-show="leadform.lastname.$error.required"></i>
@@ -49,8 +49,8 @@
 	    	<input type="text" ng-model="lead.lName" name="lastname" required/>	 
 	    </label>   
 	  </div>
-	  <div class="item item-input item-button-right large-item">
-	    <span class="input-label">
+	  <div class="item item-input item-button-right large-item" style="background-color:rgba(0,0,0,0) !important; border-color:#257792; color:#EEEEEE;">
+	    <span class="input-label" style="color:#EEEEEE;">
 	    	Phone
 	    	<i class="fa fa-pencil balanced pull-right" ng-show="(leadform.phone.$dirty && !leadform.phone.$error.required)"/>
 	    	<i class="ion-alert assertive pull-right" ng-show="leadform.phone.$error.required"/>
@@ -59,29 +59,29 @@
 	    	<input type="text" ng-model="lead.phone" name="phone" required/>
 	    </label>	    
 	    <button class="button button-large" style="height:57px;" ng-click="callphone()" ng-hide="isNew">
-	    	<i class="icon ion-android-call"></i>
+	    	<i class="icon ion-android-call" ></i>
 	    </button>
 	  </div>
-	  <label class="item item-input large-item">
-	    <span class="input-label">
+	  <div class="item item-input large-item" style="background-color:rgba(0,0,0,0) !important; border-color:#257792; color:#EEEEEE;">
+	    <span class="input-label" style="color:#EEEEEE;">
 	    	Company
 	    	<i class="fa fa-pencil balanced pull-right" ng-show="leadform.company.$dirty"/>
 	    </span>
 	    <label class="item-input-wrapper" style="max-width:230px;">
 	    	<input type="text" ng-model="lead.company" name="company">
 	    </label>	    
-	  </label>
-	  <label class="item item-input large-item" ng-show="inSalesforce || isNew">
-	    <span class="input-label">
+	  </div>
+	  <div class="item item-input large-item" ng-show="inSalesforce || isNew" style="background-color:rgba(0,0,0,0) !important; border-color:#257792; color:#EEEEEE;">
+	    <span class="input-label" style="color:#EEEEEE;">
 	    	Status
 	    	<i class="fa fa-pencil balanced pull-right" ng-show="leadform.status.$dirty"/>
 	    </span>
 	    <select ng-model="lead.status" ng-options="option.value as option.label for option in statusOptions" name="status">
 		</select>		
-	  </label>
+	  </div>
 	</div>
 </ion-content>
-<ion-footer-bar class="appstyle">
+<ion-footer-bar class="appstyle" ng-cloak>
 		<div class="button-bar">
 		<button class="button button-icon icon ion-person-add" ng-click="addToDevice()" ng-hide="inDevice || isNew"></button>
 		<button class="button button-icon icon ionicons ion-android-contact" ng-click="showOnDevice()" ng-show="inDevice"></button>
@@ -90,9 +90,10 @@
 		<button class="button button-icon" ng-click="addToSalesforce()"  ng-hide="inSalesforce || isNew">
 				<div class="fa-stack">
 				<i class="icon fa fa-cloud fa-stack-1x"></i>
-				<i class="fa fa-plus fa-stack-1x dark" style="margin-left:2px;"></i>		
+					<i class="fa fa-plus fa-stack-1x fa-inverse" style="margin-left:2px;"></i>	
 				</div>								
 		</button>
+		<button class="button button-icon icon fa fa-qrcode" ng-click="addThroughQRCode()" ng-show="isNew"></button>
 		</div>
 </ion-footer-bar>
 </ion-view>
